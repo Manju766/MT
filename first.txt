@@ -1,4 +1,3 @@
 this is my frist text file in Git
 
 second comment
-thrid
