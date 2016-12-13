@@ -1,0 +1,82 @@
+﻿<Project ToolsVersion="4.0"  xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="RunTargets">
+<!-- *****************************Pre-QA MT Build File*********************************************-->
+  <PropertyGroup>
+    <!--**************************Directory paths******************-->
+
+    <TFSexepath>"C:\Program Files\Microsoft Visual Studio 12.0\Common7\IDE\TF.exe"</TFSexepath>
+    <TFSourceLocation>$/Dash/DashMain/DASHApps</TFSourceLocation>
+    
+    <!--**************************publish batch file paths******************-->
+    
+	 <Scriptpath>$(MsBuildthisFileDirectory)</Scriptpath>
+    <!--**************************working directory path for ezaudit******************-->
+    <workingDIRpath>C:\Program Files\Jenkins\workspace\dashMain-M05_MT</workingDIRpath>
+	
+	<labelname>dash_v1.0_27SEP2016</labelname>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    
+  </PropertyGroup>
+
+  <Target Name="RunTargets">
+    
+    <Message Text="************************Build build has been Requested*********************">
+    </Message>
+    <Message Text="**************************************************************************************************************">
+    </Message>
+    <Message Text="****************************TARGETS ARE CALLED********************************">
+    </Message>    
+	<!-- <CallTarget Targets="Clean"></CallTarget>  -->
+	 <CallTarget Targets="GetLatest"></CallTarget> 
+	<CallTarget Targets="Build"></CallTarget>
+	 <CallTarget Targets="Publish"></CallTarget> 
+	<CallTarget Targets="Deploypackage"></CallTarget>  
+  </Target>
+  
+  <Target Name="Clean">
+   
+      <RemoveDir Directories="C:\Program Files\Jenkins\workspace\dashMain-M05_MT\*.*"></RemoveDir>
+      
+  </Target>
+<Target Name="GetLatest">
+ 
+ <Exec Command="$(TFSexepath)  get /v:L$(labelname) $(TFSourceLocation)/dashMiddleTier /force /recursive"  WorkingDirectory="$(workingDIRpath)" /> 
+ <Exec Command="$(TFSexepath)  get /v:L$(labelname) $(TFSourceLocation)/Common /force /recursive"  WorkingDirectory="$(workingDIRpath)" /> 
+ <Exec Command="$(TFSexepath)  get /v:L$(labelname) $(TFSourceLocation)/.nuget /force /recursive"  WorkingDirectory="$(workingDIRpath)" />
+ <Exec Command="$(TFSexepath)  get /v:L$(labelname) $(TFSourceLocation)/packages /force /recursive"  WorkingDirectory="$(workingDIRpath)" />
+ <Exec Command="$(TFSexepath)  get /v:L$(labelname) $(TFSourceLocation)/Assemblies /force /recursive"  WorkingDirectory="$(workingDIRpath)" />
+ <Exec Command="$(TFSexepath)  get /v:L$(labelname) CommonAssemblyInfo.cs /force "  WorkingDirectory="$(workingDIRpath)" />
+ <Exec Command="$(TFSexepath)  get /v:L$(labelname) MiddleTier.sln /force /recursive"  WorkingDirectory="$(workingDIRpath)" />
+ <Exec Command="$(TFSexepath)  get /v:L$(labelname) MiddleTierBuild.proj /force /recursive"  WorkingDirectory="$(workingDIRpath)" />
+      
+ </Target>
+  
+  <Target Name="Build">
+  <MSBuild Projects="$(workingDIRpath)\MiddleTierBuild.proj"></MSBuild>
+  
+  <Message Text="****************************BUILD HAS BEEN COMPLETED ********************************">
+    </Message>  
+  </Target>
+
+  
+  <Target Name="Publish">
+    <Exec Command="$(MsBuildthisFileDirectory)\Pre-QA-Publish.bat"></Exec>
+    <Message Text="****************************PUBLISH HAS BEEN COMPLETED********************************">
+    </Message>  
+  </Target>
+  
+  
+<Target Name="Deploypackage">
+        
+<Exec Command="$(MsBuildthisFileDirectory)\2_Call_Powershell.bat"/>
+<Message Text="****************************PACKAGE HAS BEEN DEPLOYED TO SERVER********************************">
+    </Message>  
+</Target>
+</Project>
+
+
+
