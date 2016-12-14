@@ -1,9 +1,9 @@
  #initilizing credential object
     $Username = "rfg\malleman"
-    $Password = ConvertTo-SecureString ‘Realogy.2’ -AsPlainText -Force
+    $Password = ConvertTo-SecureString â€˜Realogy.2â€™ -AsPlainText -Force
     $cred = New-Object System.Management.Automation.PSCredential $Username, $Password
     
-
+#below code is to create package
     #Package path 
     $packagepath="C:\Working_Directory\Deployment\Pre-QA_Builds\DashMain_MT"
    
